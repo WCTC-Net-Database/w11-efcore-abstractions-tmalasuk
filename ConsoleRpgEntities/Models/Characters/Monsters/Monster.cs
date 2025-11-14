@@ -10,6 +10,8 @@ namespace ConsoleRpgEntities.Models.Characters.Monsters
         public int AggressionLevel { get; set; }
         public string MonsterType { get; set; }
 
+        public int? Power { get; set; } = 0;
+
         protected Monster()
         {
 

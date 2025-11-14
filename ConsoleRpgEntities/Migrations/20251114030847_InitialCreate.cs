@@ -35,6 +35,7 @@ namespace ConsoleRpgEntities.Migrations
                     Health = table.Column<int>(type: "int", nullable: false),
                     AggressionLevel = table.Column<int>(type: "int", nullable: false),
                     MonsterType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Power = table.Column<int>(type: "int", nullable: false),
                     Sneakiness = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -55,6 +56,29 @@ namespace ConsoleRpgEntities.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Players", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Items",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OwnerId = table.Column<int>(type: "int", nullable: true),
+                    ItemType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Defense = table.Column<int>(type: "int", nullable: true),
+                    Damage = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Items", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Items_Players_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "Players",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -82,6 +106,11 @@ namespace ConsoleRpgEntities.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Items_OwnerId",
+                table: "Items",
+                column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PlayerAbilities_PlayersId",
                 table: "PlayerAbilities",
                 column: "PlayersId");
@@ -89,6 +118,9 @@ namespace ConsoleRpgEntities.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Items");
+
             migrationBuilder.DropTable(
                 name: "Monsters");
 

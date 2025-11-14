@@ -2,6 +2,7 @@
 using ConsoleRpgEntities.Models.Characters;
 using ConsoleRpgEntities.Models.Characters.Monsters;
 using Microsoft.EntityFrameworkCore;
+using ConsoleRpgEntities.Models.Equipment;
 
 namespace ConsoleRpgEntities.Data
 {
@@ -11,12 +12,30 @@ namespace ConsoleRpgEntities.Data
         public DbSet<Monster> Monsters { get; set; }
         public DbSet<Ability> Abilities { get; set; }
 
+        public DbSet<Item> Items { get; set; } //equipment
+
         public GameContext(DbContextOptions<GameContext> options) : base(options)
         {
         }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer(
+                "Server=(localdb)\\MSSQLLocalDB;Database=GameDb;Trusted_Connection=True;");
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Monster>()
+                .Property(m => m.Power)
+                .IsRequired(false);
+
+
+            modelBuilder.Entity<Item>()
+                .HasDiscriminator<string>("ItemType")
+                .HasValue<Weapon>("Weapon")
+                .HasValue<Armor>("Armor");
+
             // Configure TPH for Character hierarchy
             modelBuilder.Entity<Monster>()
                 .HasDiscriminator<string>(m=> m.MonsterType)
